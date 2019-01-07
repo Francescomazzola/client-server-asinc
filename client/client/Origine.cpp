@@ -8,10 +8,12 @@ using namespace std;
 
 int main()
 {
+	int valread;
 	SOCKET	clientsocket;
 	SOCKADDR_IN addr;
 	char messaggio[80];
 	short port;
+	char buffer[1024] = {0};
 	WORD wVersionRequested = MAKEWORD(2, 2);
 	WSADATA wsaData;
 	WSAStartup(wVersionRequested, &wsaData);
@@ -25,7 +27,12 @@ int main()
 	cout << "dammi il messaggio da fornire al server" << endl;
 	cin >> messaggio;
 	send(clientsocket, messaggio, sizeof(messaggio), 0);
+	Sleep(20);
+	if (recv(clientsocket, buffer, 2000, 0) > 0) {
+		cout << buffer;
+	}
+	
 	WSACleanup();
-	system("pause");
+	main();
 	return 0;
 }
