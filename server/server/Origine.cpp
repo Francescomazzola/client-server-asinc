@@ -6,20 +6,35 @@
 
 
 using namespace std;
+SOCKET	remoteSocket;
+SOCKADDR_IN Client_addr;
+int ls_result;
+int sin_size;
+
+void chatting(SOCKET	listenSocket) {
+	char buffer[256];
+	
+	sin_size = sizeof(struct sockaddr_in);
+	remoteSocket = accept(listenSocket, (struct sockaddr *)&Client_addr, &sin_size);
+
+	/* Il Server accetta il messaggio dal Client */
+	recv(remoteSocket, buffer, sizeof(buffer), 0);
+	if (strcmp(buffer, "q") == 0)
+		return;
+	cout << "messaggio arrivato:" << buffer << endl;
+	char ok[256];
+	cin >> ok;
+	send(remoteSocket, ok, strlen(ok), 0);
+	chatting(listenSocket);
+}
 
 int main()
 {
 	SOCKET	listenSocket;
-	SOCKET	remoteSocket;
 	SOCKADDR_IN Server_addr;
-	SOCKADDR_IN Client_addr;
-	int sin_size;
 	short port;
-
-	char buffer[256];
-
 	int wsastartup;
-	int ls_result;
+	
 
 	/* Inizializzazione della libreria Socket */
 	WORD wVersionRequested = MAKEWORD(2, 2);
@@ -48,21 +63,12 @@ int main()
 	if (ls_result < 0) printf("Server: errore durante la listen.\n");
 	else printf("La Socket è in Ascolto\n");
 
-	/* La socket accetta la richiesta di connessione del Client */
-	sin_size = sizeof(struct sockaddr_in);
-	remoteSocket = accept(listenSocket, (struct sockaddr *)&Client_addr,
-		&sin_size);
-	cout << "accettata connessione client" << endl;
+	chatting( listenSocket);
 
-	/* Il Server accetta il messaggio dal Client */
-	recv(remoteSocket, buffer, sizeof(buffer), 0);
-	cout << "messaggio arrivato:" << buffer << endl;
-	char  ok[12] = "ok";
-	send(remoteSocket, ok, strlen(ok), 0);
 	printf("Chiudo il Server");
 	closesocket(remoteSocket);
 	WSACleanup();
-	main();
 	system("pause");
 	return 0;
 }
+

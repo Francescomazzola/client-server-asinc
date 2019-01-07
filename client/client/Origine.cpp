@@ -22,17 +22,23 @@ int main()
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	addr.sin_port = htons(port);
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (connect(clientsocket, (LPSOCKADDR)&addr, sizeof(addr)) < 0)
+
+	if (connect(clientsocket, (LPSOCKADDR)&addr, sizeof(addr)) < 0) {
 		cout << "errore!" << endl;
-	cout << "dammi il messaggio da fornire al server" << endl;
+		exit(1);
+	}
+		
+	cout << "dammi il messaggio da fornire al server, per chiudere premere q" << endl;
 	cin >> messaggio;
 	send(clientsocket, messaggio, sizeof(messaggio), 0);
-	Sleep(20);
+	if (messaggio == "q")
+		exit(1);
 	if (recv(clientsocket, buffer, 2000, 0) > 0) {
-		cout << buffer;
+		cout << buffer<<endl;
 	}
-	
-	WSACleanup();
 	main();
-	return 0;
+	WSACleanup();
+	
+
 }
+
