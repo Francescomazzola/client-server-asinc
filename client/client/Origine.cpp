@@ -28,13 +28,15 @@ int main()
 {
 	int valread;
 	short port;
-	
+	char ip[15];
 	WORD wVersionRequested = MAKEWORD(2, 2);
 	WSADATA wsaData;
 	WSAStartup(wVersionRequested, &wsaData);
 	port = 27000;
 	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	cout << "dammi l'ip" << endl;
+	gets_s(ip);
+	addr.sin_addr.s_addr = inet_addr(ip);
 	addr.sin_port = htons(port);
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (connect(clientsocket, (LPSOCKADDR)&addr, sizeof(addr)) < 0) {
