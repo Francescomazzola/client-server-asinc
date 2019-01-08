@@ -44,7 +44,7 @@ int main()
 	port = 27000;
 
 	Server_addr.sin_family = AF_INET;
-	Server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	Server_addr.sin_addr.s_addr = 0;
 	Server_addr.sin_port = htons(port);
 
 	if (bind(listenSocket, (LPSOCKADDR)&Server_addr, sizeof(struct sockaddr)) < 0)
