@@ -14,8 +14,7 @@ int sin_size;
 void chatting(SOCKET	listenSocket) {
 	char buffer[256];
 	
-	sin_size = sizeof(struct sockaddr_in);
-	remoteSocket = accept(listenSocket, (struct sockaddr *)&Client_addr, &sin_size);
+	
 	recv(remoteSocket, buffer, sizeof(buffer), 0);
 	if (strcmp(buffer, "q") == 0)
 		return;
@@ -42,7 +41,7 @@ int main()
 	if (listenSocket < 0) cout << "Server: errore nella creazione della socket.\n" << endl;
 	else cout << "La Listening Socket è partita\n" << endl;
 
-	port = 3456;
+	port = 27000;
 
 	Server_addr.sin_family = AF_INET;
 	Server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -55,12 +54,16 @@ int main()
 	if (ls_result < 0) printf("Server: errore durante la listen.\n");
 	else cout << "La Socket è in Ascolto\n" << endl;
 
+	sin_size = sizeof(struct sockaddr_in);
+	remoteSocket = accept(listenSocket, (struct sockaddr *)&Client_addr, &sin_size);
+
+	cout << "client " << inet_ntoa(Client_addr.sin_addr) << "  " << ntohs(Client_addr.sin_port) << endl;
+	cout << "server " << inet_ntoa(Server_addr.sin_addr) << " " << ntohs(Server_addr.sin_port) << endl;
 	chatting( listenSocket);
 
 	cout << "Chiudo il Server" << endl;
 	closesocket(remoteSocket);
 	WSACleanup();
-	system("pause");
 	return 0;
 }
 
