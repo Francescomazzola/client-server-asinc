@@ -1,0 +1,4 @@
+﻿  Origine.cpp
+c:\users\studente\desktop\client server asincrono\client-server-chat-sincronized\client\client\origine.cpp(37): warning C4101: 'valread': variabile locale senza riferimenti
+  client.vcxproj -> C:\Users\studente\Desktop\client server asincrono\client-server-chat-sincronized\client\x64\Debug\client.exe
+  client.vcxproj -> C:\Users\studente\Desktop\client server asincrono\client-server-chat-sincronized\client\x64\Debug\client.pdb (Partial PDB)

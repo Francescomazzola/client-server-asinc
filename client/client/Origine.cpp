@@ -2,27 +2,35 @@
 #include <stdio.h>
 #include <winsock.h>
 #include <string.h>
+#include <Windows.h>
+#include <process.h>
+
 #pragma comment (lib,"Ws2_32.lib")
 
 using namespace std;
 SOCKET	clientsocket;
 SOCKADDR_IN addr;
 
-void chatting() {
+unsigned int __stdcall send(void*) {
 	char messaggio[80];
-	char buffer[1024] = { 0 };
-
-	cout << "dammi il messaggio da fornire al server, per chiudere premere q" << endl;
-	cin >> messaggio;
-	send(clientsocket, messaggio, sizeof(messaggio), 0);
-	if (strcmp(messaggio,"q")==0)
-		return;
-	if (recv(clientsocket, buffer, 2000, 0) > 0) {
-		cout << buffer << endl;
+	while (true) {
+		cout << "dammi il messaggio da fornire al server, per chiudere premere q" << endl;
+		cin >> messaggio;
+		send(clientsocket, messaggio, sizeof(messaggio), 0);
 	}
-	chatting();
-
+	return 0;
 }
+
+unsigned int __stdcall receive(void*) {
+	char buffer[1024] = { 0 };
+	while (true) {
+		if (recv(clientsocket, buffer, 2000, 0) > 0) {
+			cout << buffer << endl;
+		}
+	}
+	return 0;
+}
+
 
 int main()
 {
@@ -43,10 +51,12 @@ int main()
 		cout << "errore!" << endl;
 		exit(1);
 	}
-	chatting();
+	HANDLE myhandleA, myhandleB;
+	myhandleA = (HANDLE)_beginthreadex(0, 0, &receive, (void*)0, 0, 0);
+	myhandleB = (HANDLE)_beginthreadex(0, 0, &send, (void*)0, 0, 0);
+
 	closesocket(clientsocket);
 	WSACleanup();
 	
-
 }
 
