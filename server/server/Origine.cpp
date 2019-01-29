@@ -2,6 +2,8 @@
 #include <winsock.h>
 #include <string.h>
 #include <iostream>
+#include <Windows.h>
+#include <process.h>
 #pragma comment (lib,"Ws2_32.lib")
 
 
@@ -10,24 +12,28 @@ SOCKET	remoteSocket;
 SOCKADDR_IN Client_addr;
 int ls_result;
 int sin_size;
+SOCKET	listenSocket;
 
-void chatting(SOCKET	listenSocket) {
-	char buffer[256];
-	
-	
-	recv(remoteSocket, buffer, sizeof(buffer), 0);
-	if (strcmp(buffer, "q") == 0)
-		return;
-	cout << "messaggio arrivato:" << buffer << endl;
-	char ok[256];
-	cin >> ok;
-	send(remoteSocket, ok, strlen(ok), 0);
-	chatting(listenSocket);
+unsigned int __stdcall send(void*) {
+	while (true) {
+		char ok[256];
+		cin >> ok;
+		send(remoteSocket, ok, strlen(ok), 0);
+	}
 }
+
+unsigned int __stdcall receive(void*) {
+	char buffer[256];
+	while (true) {
+		recv(remoteSocket, buffer, sizeof(buffer), 0);
+		cout << "messaggio arrivato:" << buffer << endl;
+	}
+}
+
 
 int main()
 {
-	SOCKET	listenSocket;
+	
 	SOCKADDR_IN Server_addr;
 	short port;
 	int wsastartup;
@@ -59,8 +65,9 @@ int main()
 
 	cout << "client " << inet_ntoa(Client_addr.sin_addr) << "  " << ntohs(Client_addr.sin_port) << endl;
 	cout << "server " << inet_ntoa(Server_addr.sin_addr) << " " << ntohs(Server_addr.sin_port) << endl;
-	chatting( listenSocket);
-
+	HANDLE myhandleA, myhandleB;
+	myhandleA = (HANDLE)_beginthreadex(0, 0, &receive, (void*)0, 0, 0);
+	myhandleB = (HANDLE)_beginthreadex(0, 0, &send, (void*)0, 0, 0);
 	cout << "Chiudo il Server" << endl;
 	closesocket(remoteSocket);
 	WSACleanup();
